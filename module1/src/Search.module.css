@@ -40,3 +40,20 @@
 .read-the-docs {
   color: #888;
 }
+.searchContainer {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.searchForm {
+  flex: 0 0 auto;
+  background-color: lightblue;
+  padding: 10px;
+}
+
+.resultsContainer {
+  flex: 1;
+  background-color: lightgray;
+  padding: 20px;
+}

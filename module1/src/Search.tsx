@@ -1,42 +1,54 @@
-import { Component, ChangeEvent } from 'react'
-import './Search.css'
-import axios from 'axios'
+import React, { Component, ChangeEvent, FormEvent } from 'react';
+import axios from 'axios';
+import styles from './Search.module.css'; // Импорт CSS модуля
 
+// Определение типов для состояния
+// interface ISearchState {
+//   apiResult: any; // Здесь можно указать более конкретный тип вместо any
+//   inputValue: string;
+// }
 
-class Search extends Component {
-  constructor(props){
+class Search extends Component<{}, ISearchState> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       apiResult: null,
       inputValue: ''
     };
   }
-  handleSearch = (event) => {
-    event.preventDefault()
-    axios.get(`https://swapi.dev/api/${this.state.inputValue}`)
-    .then((result)=> {
-      this.setState({apiResult: result.data})
-        console.log(apiResult)
-        console.log(inputValue)
-      })
-      .catch((error)=>{
-        console.log(error)
-        console.log('asdasd')
-      })
+  componentDidMount() {
+    // Загрузка последнего запроса из localStorage
+    const lastQuery = localStorage.getItem('lastQuery');
+    if (lastQuery) {
+      this.setState({ apiResult: lastQuery });
+    }
   }
-  handleInputChange = (event) => {
-    event.preventDefault()
+  handleSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const defaultUrl = 'https://swapi.dev/api/films';
+    const url = this.state.inputValue ? `https://swapi.dev/api/${this.state.inputValue}` : defaultUrl;
+    axios.get(url)
+    .then((result) => {
+      this.setState({ apiResult: result.data });
+      const trimmedQuery = this.state.apiResult.trim();
+      localStorage.setItem('lastQuery', trimmedQuery);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     this.setState({
       inputValue: event.target.value
     });
   }
-  
+
   render() {
     return (
-      <>
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div className={styles.searchContainer}>
         <h1>Search from Star Wars</h1>
-        <div style={{ flex: '0 0 auto', backgroundColor: 'lightblue', padding: '10px' }}>
+        <div className={styles.searchForm}>
           <form onSubmit={this.handleSearch}>
             <input
               type="text"
@@ -47,14 +59,13 @@ class Search extends Component {
             <button type='submit'>Search</button>
           </form>
         </div>
-      
-        <div style={{ flex: '1', backgroundColor: 'lightgray', padding: '20px' }}>
-        <p>{JSON.stringify(this.state.apiResult, null, 2)}</p>
+
+        <div className={styles.resultsContainer}>
+          <p>{JSON.stringify(this.state.apiResult, null, 2)}</p>
         </div>
-        </div>
-      </>
-    )
-    }
+      </div>
+    );
+  }
 }
 
-export default Search
+export default Search;
