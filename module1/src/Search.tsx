@@ -2,11 +2,11 @@ import React, { Component, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import styles from './Search.module.css'; // Импорт CSS модуля
 
-// Определение типов для состояния
-// interface ISearchState {
-//   apiResult: any; // Здесь можно указать более конкретный тип вместо any
-//   inputValue: string;
-// }
+
+interface ISearchState {
+  apiResult: any; 
+  inputValue: string;
+}
 
 class Search extends Component<{}, ISearchState> {
   constructor(props: {}) {
@@ -25,7 +25,7 @@ class Search extends Component<{}, ISearchState> {
   }
   handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const defaultUrl = 'https://swapi.dev/api/films';
+    const defaultUrl = 'https://swapi.dev/api/people';
     const url = this.state.inputValue ? `https://swapi.dev/api/${this.state.inputValue}` : defaultUrl;
     axios.get(url)
     .then((result) => {
